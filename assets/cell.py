@@ -8,7 +8,7 @@ class Types:
 
 class Cell:
     def __init__(self,type,x,y):
-        self.status = True
+        self.status = True #True when it wasn't moved by update_physics
         self.type = type
         self.x = x
         self.y = y
@@ -34,6 +34,7 @@ class Cell:
         self.y = y
         return self
 
+    #icons are used for printing grid btw
     def get_icon(self):
         if self.get_type() == Types.empty:
             return " "
