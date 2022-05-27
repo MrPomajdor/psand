@@ -1,24 +1,41 @@
 from assets.cell import *
 from assets.log import log
+from assets.settings import Settings
+import random
+
 class Grid:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.grid = []
+        self.default_cell_type = Types.empty
         self.create_grid()
         
     def create_grid(self):
+        log("\n\n---------------Creating grid---------------\n")
+        log(f"width: {self.width}")
+        log(f"height: {self.height}")
+        log(f"Default cell type: {self.default_cell_type}")
+        log("\n")
         for i in range(self.height):
             row = []
             for j in range(self.width):
-                row.append(Cell(Types.empty, j, i))
+                row.append(Cell(self.default_cell_type, j, i))
             self.grid.append(row)
             
     def print_grid(self):
-        for row in self.grid:
-            for cell in row:
-                print(cell.get_icon(), end=" ")
-            print()
+        if Settings.drawToFile:
+            with open(Settings.gridFileName, "w") as myfile:
+                for row in self.grid:
+                    for cell in row:
+                        myfile.write(cell.get_type().value + " ")
+                    myfile.write("\n")  # Add new line at the end of each row
+        else:
+            for row in self.grid:
+                for cell in row:
+                    print(cell.get_icon(), end=" ")
+                print()
+        
             
     def get_cell(self, x, y):
         return self.grid[y][x]
@@ -28,7 +45,20 @@ class Grid:
     
     def set_cell_type(self, x, y, type):
         self.grid[y][x].set_type(type)
-    
+        self.grid[y][x].set_status(True)
+        log(f"set cell at {(x,y)} to type {type}")
+        return self.grid[y][x]
+    def get_cell_neighbour(self, x, y,direction):
+        if direction == "up":
+            return self.grid[y - 1][x]
+        elif direction == "down":
+            return self.grid[y + 1][x]
+        elif direction == "left":
+            return self.grid[y][x - 1]
+        elif direction == "right":
+            return self.grid[y][x + 1]
+        else:
+            return None
     def move_cell(self, x, y, direction):
         log(f"moving cell at {(x,y)} in direction {direction} ({self.grid[y][x].get_position()})")
         if x >= self.width or x < 0 or y >= self.height or y < 0:
@@ -72,10 +102,45 @@ class Grid:
                         continue
 
                     #Check if cell is on edge of grid
-                    if cell.get_position()[0] >= self.width - 1 or cell.get_position()[1] >= self.height - 1:
+                    if cell.get_position()[1] >= self.height - 1:
+                        continue
+
+
+                    #Check if cell under current cell NOT empty
+                    if not self.get_cell_neighbour(cell.get_position()[0],cell.get_position()[1],"down").get_type() == Types.empty:
+                        continue #do not move
+                    self.move_cell(cell.get_position()[0], cell.get_position()[1], "down")
+
+                if cell.get_type()==Types.water:
+                    if cell.get_status() == False:
+                        log(f"status blocked {cell.get_position()}")
+                        continue
+                    
+                    
+                    
+
+
+                    #Check if cell is on edge of grid
+                    if cell.get_position()[0] >= self.width - 1:
+                        continue
+                    if cell.get_position()[1] >= self.height - 1:
+                        if random.randint(0,3) == 0:
+                            if self.get_cell_neighbour(cell.get_position()[0],cell.get_position()[1],"left").get_type() == Types.empty:
+                                self.move_cell(cell.get_position()[0], cell.get_position()[1], "left")
+                        else:
+                            if self.get_cell_neighbour(cell.get_position()[0],cell.get_position()[1],"right").get_type() == Types.empty:
+                                self.move_cell(cell.get_position()[0], cell.get_position()[1], "right")
                         continue
 
                     #Check if cell under current cell NOT empty
-                    if not self.grid[cell.get_position()[1]][cell.get_position()[0] + 1].get_type() == Types.empty:
-                        continue #do not move
+                    if not self.get_cell_neighbour(cell.get_position()[0],cell.get_position()[1],"down").get_type() == Types.empty:
+
+                        #move cell randomly left or right
+                        if random.randint(0,2) == 0:
+                            self.move_cell(cell.get_position()[0], cell.get_position()[1], "left")
+                        else:
+                            self.move_cell(cell.get_position()[0], cell.get_position()[1], "right")
+                        continue
+
                     self.move_cell(cell.get_position()[0], cell.get_position()[1], "down")
+

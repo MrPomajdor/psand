@@ -5,13 +5,19 @@ import time
 
 def main():
     #Create grid
-    log("\n\n---------------Creating grid---------------\n")
+    a=True
     gr = grid.Grid(10, 10)
-    gr.set_cell_type(2, 0, cell.Types.sand)
-    gr.set_cell_type(2, 3, cell.Types.sand)
+    gr.set_cell_type(5, 0, cell.Types.water)
+    gr.set_cell_type(2, 4, cell.Types.sand)
 
     while 1:
         print("----------------------------------------")
+        if a:
+            gr.set_cell_type(2, 0, cell.Types.water)
+            #a = not a
+        else:
+            gr.set_cell_type(4, 0, cell.Types.water)
+            #a = not a
         gr.print_grid()
         gr.update_physics()
         time.sleep(0.5)

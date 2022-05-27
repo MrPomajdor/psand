@@ -18,18 +18,21 @@ class Cell:
 
     def set_status(self,status):
         self.status = status
+        return self
 
     def get_type(self):
         return self.type
 
     def set_type(self,type):
         self.type = type
+        return self
 
     def get_position(self):
         return self.x,self.y
     def set_position(self,x,y):
         self.x = x
         self.y = y
+        return self
 
     def get_icon(self):
         if self.get_type() == Types.empty:
