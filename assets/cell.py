@@ -3,6 +3,7 @@ class Types:
     wall = 1
     sand = 2
     water = 3
+    smoke = 4
 
 
 
@@ -32,7 +33,7 @@ class Cell:
     def set_position(self,x,y):
         self.x = x
         self.y = y
-        return self
+        return self.x,self.y
 
     #icons are used for printing grid btw
     def get_icon(self):
@@ -44,3 +45,5 @@ class Cell:
             return "#"
         elif self.get_type() == Types.water:
             return "."
+        elif self.get_type() == Types.smoke:
+            return "~"
