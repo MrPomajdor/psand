@@ -4,6 +4,7 @@ class Types:
     sand = 2
     water = 3
     smoke = 4
+    clone = 5
 
 
 
@@ -13,6 +14,7 @@ class Cell:
         self.type = type
         self.x = x
         self.y = y
+        self.data = {}
 
     def get_status(self):
         return self.status
@@ -27,6 +29,12 @@ class Cell:
     def set_type(self,type):
         self.type = type
         return self
+
+    def set_data(self,data):
+        self.data = data
+        return self
+    def get_data(self):
+        return self.data
 
     def get_position(self):
         return self.x,self.y
@@ -47,3 +55,23 @@ class Cell:
             return "."
         elif self.get_type() == Types.smoke:
             return "~"
+        elif self.get_type() == Types.clone:
+            return "C"
+        else:
+            return "?"
+    
+    def icon_to_type(icon):
+        if icon == " ":
+            return Types.empty
+        elif icon == "X":
+            return Types.wall
+        elif icon == "#":
+            return Types.sand
+        elif icon == ".":
+            return Types.water
+        elif icon == "~":
+            return Types.smoke
+        elif icon == "C":
+            return Types.clone
+        else:
+            return Types.empty
