@@ -1,3 +1,5 @@
+from assets.colors import bcolor
+from assets.settings import Settings
 class Types:
     empty = 0
     wall = 1
@@ -75,3 +77,21 @@ class Cell:
             return Types.clone
         else:
             return Types.empty
+            
+    def get_color(self):
+        if not Settings.printInColor:
+            return ""
+        if self.get_type() == Types.empty:
+            return bcolor.black
+        elif self.get_type() == Types.wall:
+            return bcolor.white
+        elif self.get_type() == Types.sand:
+            return bcolor.byellow
+        elif self.get_type() == Types.water:
+            return bcolor.bblue
+        elif self.get_type() == Types.smoke:
+            return bcolor.bblack
+        elif self.get_type() == Types.clone:
+            return bcolor.magenta
+        else:
+            return bcolor.black

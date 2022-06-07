@@ -1,6 +1,8 @@
 from assets.cell import *
 from assets.log import log
 from assets.settings import Settings
+from assets.colors import bcolor
+
 import random
 import json
 class Grid:
@@ -65,14 +67,14 @@ class Grid:
                 for x in range(self.height):
                     print(border, end="")
                     for y in range(self.width):
-                        print(self.grid[y][x].get_icon(), end=" ")
+                        print(self.grid[y][x].get_color() + self.grid[y][x].get_icon()+bcolor.reset, end=" ")
                     print(border)
             else:
                 lines="\r"
                 for x in range(self.height):
                     lines += border
                     for y in range(self.width):
-                        lines += self.grid[y][x].get_icon()+" "
+                        lines += self.grid[y][x].get_color() + self.grid[y][x].get_icon()+" "+bcolor.reset
                     lines+= border+"\n"
                 lines+="\r"
                 print("\r"+lines,end="\r")
@@ -226,7 +228,7 @@ class Grid:
 
                     #Check if cell under current cell NOT empty
                     if not self.get_cell_neighbour(cell,"down").get_type() == Types.empty:
-                        if self.get_cell_neighbour(cell,"down").get_type() == Types.smoke:
+                        if self.get_cell_neighbour(cell,"down").get_type() == Types.smoke or self.get_cell_neighbour(cell,"down").get_type() == Types.water:
                             self.swap_cells(cell,self.get_cell_neighbour(cell,"down"))
                             continue
                         rnd1=random.randint(0,6)
