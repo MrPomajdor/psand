@@ -14,6 +14,7 @@ class Grid:
         self.filename = ""
         self.loaded_text=""
         self.grid_loaded = False
+        self.last_grid=[]
         self.create_grid()
     
     #explains itself
@@ -57,11 +58,11 @@ class Grid:
     def print_grid(self,border=""):
         if Settings.drawToFile:
             with open(Settings.gridFileName, "w") as myfile:
-                for x in range(self.height):
-                    
+                for x in range(self.height): 
                     for y in range(self.width):
                         myfile.write(self.grid[x][y].get_icon(), end=" ")
                     myfile.write(border+"\n")  # Add new line at the end of each row
+                    self.last_grid=self.grid
         else:
             if not Settings.replaceCharactersInConsole:
                 for x in range(self.height):
@@ -69,6 +70,7 @@ class Grid:
                     for y in range(self.width):
                         print(self.grid[y][x].get_color() + self.grid[y][x].get_icon()+bcolor.reset, end=" ")
                     print(border)
+                    self.last_grid=self.grid
             else:
                 lines="\r"
                 for x in range(self.height):
@@ -78,6 +80,7 @@ class Grid:
                     lines+= border+"\n"
                 lines+="\r"
                 print("\r"+lines,end="\r")
+                self.last_grid=self.grid
             
             
         
@@ -138,7 +141,6 @@ class Grid:
         return neighbours
 
     #moves cells in given direction  
-    #Todo: NEED TO CHECK IF CELL IS MOVABLE
     def move_cell(self, x, y, direction):
         log(f"moving cell at {(x,y)} in direction {direction} ({self.grid[x][y].get_position()})",weight=8)
         if x >= self.width or x < 0 or y >= self.height or y < 0:
@@ -164,7 +166,6 @@ class Grid:
         cell2.set_status(True)
         self.update_positions()     
     #Update cell position when it is moved
-    #Todo: it's not fully working i think
     def update_positions(self):
         for x in range(self.width):
             for y in range(self.height):
@@ -180,7 +181,6 @@ class Grid:
 
     #Update cell position based on its type
     #Main function for updating cell positions based on their type
-    #Todo: make water work
     def update_physics(self):
         for x in range(self.width):
             for y in range(self.height):
@@ -237,16 +237,29 @@ class Grid:
                             if self.get_cell_neighbour(cell,"left").get_type() == Types.empty:
                                 if self.get_cell(cell.get_position()[0]-1,cell.get_position()[1]+1).get_type() == Types.empty:
                                     self.move_cell(cell.get_position()[0], cell.get_position()[1], "left")
+                                else:
+                                    if self.get_cell_neighbour(cell,"left").get_type() == Types.smoke or self.get_cell_neighbour(cell,"left").get_type() == Types.water:
+                                        self.swap_cells(cell,self.get_cell_neighbour(cell,"left"))
                             elif self.get_cell_neighbour(cell,"right").get_type() == Types.empty:
                                 if self.get_cell(cell.get_position()[0]+1,cell.get_position()[1]+1).get_type() == Types.empty:
                                     self.move_cell(cell.get_position()[0], cell.get_position()[1], "right")
+                                else:
+                                    if self.get_cell_neighbour(cell,"right").get_type() == Types.smoke or self.get_cell_neighbour(cell,"right").get_type() == Types.water:
+                                        self.swap_cells(cell,self.get_cell_neighbour(cell,"right"))
                         elif rnd1 == 1:
                             if self.get_cell_neighbour(cell,"right").get_type() == Types.empty:
                                 if self.get_cell(cell.get_position()[0]+1,cell.get_position()[1]+1).get_type() == Types.empty:
                                     self.move_cell(cell.get_position()[0], cell.get_position()[1], "right")
+                                else:
+                                    if self.get_cell_neighbour(cell,"right").get_type() == Types.smoke or self.get_cell_neighbour(cell,"right").get_type() == Types.water:
+                                        self.swap_cells(cell,self.get_cell_neighbour(cell,"right"))
                             elif self.get_cell_neighbour(cell,"left").get_type() == Types.empty:
                                 if self.get_cell(cell.get_position()[0]-1,cell.get_position()[1]+1).get_type() == Types.empty:
                                     self.move_cell(cell.get_position()[0], cell.get_position()[1], "left")
+                                else:
+                                    if self.get_cell_neighbour(cell,"left").get_type() == Types.smoke or self.get_cell_neighbour(cell,"left").get_type() == Types.water:
+                                        self.swap_cells(cell,self.get_cell_neighbour(cell,"left"))
+                                
                         continue
                     
                     #move cell down
