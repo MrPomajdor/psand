@@ -3,6 +3,7 @@ from assets.log import log
 from assets.settings import Settings
 from assets.colors import bcolor
 
+import os
 import random
 import json
 class Grid:
@@ -65,22 +66,14 @@ class Grid:
                     self.last_grid=self.grid
         else:
             if not Settings.replaceCharactersInConsole:
-                for x in range(self.height):
-                    print(border, end="")
-                    for y in range(self.width):
-                        print(self.grid[y][x].get_color() + self.grid[y][x].get_icon()+bcolor.reset, end=" ")
-                    print(border)
-                    self.last_grid=self.grid
-            else:
-                lines="\r"
-                for x in range(self.height):
-                    lines += border
-                    for y in range(self.width):
-                        lines += self.grid[y][x].get_color() + self.grid[y][x].get_icon()+" "+bcolor.reset
-                    lines+= border+"\n"
-                lines+="\r"
-                print("\r"+lines,end="\r")
+                os.system('cls' if os.name == 'nt' else 'clear')
+            for x in range(self.height):
+                print(border, end="")
+                for y in range(self.width):
+                    print(self.grid[y][x].get_color() + self.grid[y][x].get_icon()+bcolor.reset, end=" ")
+                print(border)
                 self.last_grid=self.grid
+
             
             
         
